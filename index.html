@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alifba - Learn Farsi & English</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Alifba">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lalezar&family=Vazirmatn:wght@400;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --text-color: #2C3E50;
+            --bg-color: #f7f9fc;
+        }
+
+        * {
+            box-sizing: border-box;
+            touch-action: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        body.rtl {
+            direction: rtl;
+        }
+
+        .ui-lang-toggle {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: 3px solid white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 2000;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body.rtl .ui-lang-toggle {
+            left: auto;
+            right: 10px;
+        }
+
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            padding: 20px;
+        }
+
+        .welcome-screen.hidden {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .welcome-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .child-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        .welcome-title {
+            font-family: 'Lalezar', cursive;
+            font-size: 36px;
+            color: white;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            color: rgba(255,255,255,0.9);
+            margin: 0 0 25px 0;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .start-btn {
+            background: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #E6C229;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .start-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 3px 0 #E6C229;
+        }
+
+        .app-container {
+            background: white;
+            width: 95%;
+            max-width: 450px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            border: 4px solid var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            max-height: 98vh;
+            overflow-y: auto;
+        }
+
+        .app-container.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .app-logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 5px;
+        }
+
+        .letter-display {
+            font-family: 'Amiri', serif;
+            font-size: 100px;
+            font-weight: 400;
+            color: var(--primary-color);
+            margin: 10px 0;
+            line-height: 1;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            width: 100%;
+        }
+
+        .letter-display.english {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+            background: #f0f0f0;
+            padding: 4px;
+            border-radius: 20px;
+            width: 100%;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 16px;
+            background: transparent;
+            color: #666;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .mode-btn.active {
+            background: var(--secondary-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
+        }
+
+        /* Canvas Container - Only visible in write mode */
+        .canvas-container {
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            background: white;
+            border: 3px solid var(--secondary-color);
+            position: relative;
+            display: none; /* Hidden by default */
+        }
+
+        .canvas-container.show {
+            display: block !important;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background: white;
+        }
+
+        #traceCanvas, #guideCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            display: block;
+        }
+
+        #guideCanvas {
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #traceCanvas {
+            z-index: 2;
+            touch-action: none;
+        }
+
+        .controls-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .canvas-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .clear-btn {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 3px 0 #D64545;
+        }
+
+        .clear-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 #D64545;
+        }
+
+        .sound-btn {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            box-shadow: 0 3px 0 #E6C229;
+        }
+
+        .sound-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 #E6C229;
+        }
+
+        button {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            transition: transform 0.1s;
+            border-radius: 12px;
+            font-family: 'Vazirmatn', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .nav-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 0 #2A9D8F;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: transform 0.1s, box-shadow 0.1s;
+            flex: 1;
+        }
+
+        .nav-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 #2A9D8F;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 8px;
+            margin-top: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(-10deg); }
+            75% { transform: rotate(5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .lang-switch {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .lang-switch span {
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .lang-switch a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .status-msg {
+            font-size: 11px;
+            color: #27ae60;
+            margin-top: 8px;
+            height: 14px;
+            font-weight: bold;
+        }
+
+        .offline-badge {
+            background: #27ae60;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 10px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .offline-badge.show {
+            display: inline-block;
+        }
+
+        .restart-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.95);
+            border: 2px solid var(--secondary-color);
+            padding: 8px 15px;
+            border-radius: 16px;
+            font-size: 12px;
+            color: var(--secondary-color);
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1500;
+            font-weight: bold;
+        }
+
+        .restart-btn.show {
+            display: block;
+        }
+
+        body.rtl .restart-btn {
+            right: auto;
+            left: 10px;
+        }
+
+        body.rtl .nav-buttons {
+            flex-direction: row-reverse;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .letter-display {
+                font-size: 80px;
+            }
+            
+            .canvas-wrapper {
+                height: 240px;
+            }
+            
+            .welcome-title {
+                font-size: 28px;
+            }
+            
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .mode-btn {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .letter-display {
+                font-size: 70px;
+            }
+            
+            .canvas-wrapper {
+                height: 200px;
+            }
+            
+            .app-container {
+                padding: 10px;
+            }
+            
+            .control-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+                min-width: 80px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .canvas-wrapper {
+                height: 220px;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .canvas-wrapper {
+                height: 180px;
+            }
+            
+            .letter-display {
+                font-size: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="ui-lang-toggle" id="uiLangToggle" onclick="toggleUILanguage()">🇮🇷 فارسی</button>
+
+    <div class="welcome-screen" id="welcomeScreen">
+        <img src="logo.png" alt="Logo" class="welcome-logo" onerror="this.style.display='none'">
+        <img src="pic.png" alt="Child Photo" class="child-photo" onerror="this.style.display='none'">
+        <h1 class="welcome-title" data-i18n="welcome_title">Welcome!</h1>
+        <p class="welcome-subtitle" data-i18n="welcome_subtitle">Let's Learn Farsi & English Letters Together! 🎉</p>
+        <button class="start-btn" onclick="startApp()" data-i18n="start_btn">Start Learning ▶</button>
+    </div>
+
+    <div class="app-container" id="appContainer">
+        <img src="logo.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
+        
+        <!-- Large Letter Display (always visible) -->
+        <div class="letter-display" id="letterDisplay">ا</div>
+
+        <!-- Mode Toggle -->
+        <div class="mode-toggle">
+            <button class="mode-btn active" id="learnModeBtn" onclick="switchMode('learn')" data-i18n="learn_mode">📖 Learn</button>
+            <button class="mode-btn" id="writeModeBtn" onclick="switchMode('write')" data-i18n="write_mode">✍️ Write</button>
+        </div>
+
+        <!-- Canvas Container (only in write mode) -->
+        <div class="canvas-container" id="canvasContainer">
+            <div class="canvas-wrapper">
+                <canvas id="guideCanvas"></canvas>
+                <canvas id="traceCanvas"></canvas>
+            </div>
+        </div>
+
+        <div class="controls-area">
+            <!-- Canvas Controls (only in write mode) -->
+            <div class="canvas-controls" id="canvasControls" style="display: none;">
+                <button class="control-btn clear-btn" onclick="clearCanvas()">
+                    <span>🗑️</span> <span data-i18n="clear">Clear</span>
+                </button>
+                <button class="control-btn sound-btn" onclick="playAudio()">
+                    <span>🔊</span> <span data-i18n="listen">Listen</span>
+                </button>
+            </div>
+
+            <!-- Sound Button (only in learn mode) -->
+            <button class="sound-btn" id="learnSoundBtn" onclick="playAudio()" style="width: 60px; height: 60px; border-radius: 50%; font-size: 28px; box-shadow: 0 4px 0 #E6C229; border: 3px solid white; display: flex; align-items: center; justify-content: center;">
+                🔊
+            </button>
+
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="prevLetter()">
+                    <span style="font-size: 20px;">&#10094;</span>
+                    <span style="margin-left: 5px;" data-i18n="prev">Prev</span>
+                </button>
+                <button class="nav-btn" onclick="nextLetter()">
+                    <span style="margin-right: 5px;" data-i18n="next">Next</span>
+                    <span style="font-size: 20px;">&#10095;</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="lang-switch">
+            <span data-i18n="showing">Showing:</span>
+            <span id="currentLangLabel">Farsi</span> 
+            (<a href="#" onclick="toggleLanguage()" data-i18n="switch_to_english">Switch to English</a>)
+        </div>
+        
+        <div class="status-msg" id="statusMsg" data-i18n="audio_ready">Local Audio Ready</div>
+        <div class="offline-badge" id="offlineBadge">🟢 <span data-i18n="works_offline">Works Offline</span></div>
+    </div>
+
+    <button class="restart-btn" id="restartBtn" onclick="showWelcome()">🏠 <span data-i18n="home">Home</span></button>
+
+    <script>
+        const translations = {
+            en: {
+                welcome_title: "Welcome!",
+                welcome_subtitle: "Let's Learn Farsi & English Letters Together! 🎉",
+                start_btn: "Start Learning ▶",
+                showing: "Showing:",
+                switch_to_english: "Switch to English",
+                switch_to_farsi: "Switch to Farsi",
+                audio_ready: "Local Audio Ready (Works Offline)",
+                audio_not_found: "Audio files not found. Check audio/ folder.",
+                playing: "🔊 Playing...",
+                file_not_found: "❌ File not found: ",
+                works_offline: "Works Offline",
+                home: "Home",
+                prev: "Prev",
+                next: "Next",
+                learn_mode: "📖 Learn",
+                write_mode: "✍️ Write",
+                clear: "Clear",
+                listen: "Listen",
+                english: "English",
+                farsi: "Farsi",
+                ui_lang_en: "🇺 English",
+                ui_lang_fa: "🇮🇷 فارسی"
+            },
+            fa: {
+                welcome_title: "خوش آمدید!",
+                welcome_subtitle: "بیایید با هم حروف فارسی و انگلیسی را یاد بگیریم! 🎉",
+                start_btn: "شروع یادگیری ▶",
+                showing: "نمایش:",
+                switch_to_english: "تغییر به انگلیسی",
+                switch_to_farsi: "تغییر به فارسی",
+                audio_ready: "صداها آماده هستند (کاربرد آفلاین) ✅",
+                audio_not_found: "فایل‌های صوتی پیدا نشد. پوشه audio/ را بررسی کنید. ⚠️",
+                playing: "🔊 در حال پخش...",
+                file_not_found: "❌ فایل پیدا نشد: ",
+                works_offline: "کاربرد آفلاین",
+                home: "خانه",
+                prev: "قبلی",
+                next: "بعدی",
+                learn_mode: "📖 یادگیری",
+                write_mode: "✍️ نوشتن",
+                clear: "پاک کردن",
+                listen: "گوش دادن",
+                english: "انگلیسی",
+                farsi: "فارسی",
+                ui_lang_en: "🇺 English",
+                ui_lang_fa: "🇮🇷 فارسی"
+            }
+        };
+
+        const farsiLetters = [
+            { char: 'ا', name: 'Alef', file: 'alef' }, 
+            { char: 'ب', name: 'Be', file: 'be' }, 
+            { char: 'پ', name: 'Pe', file: 'pe' }, 
+            { char: 'ت', name: 'Te', file: 'te' }, 
+            { char: 'ث', name: 'Se', file: 'se' }, 
+            { char: 'ج', name: 'Jim', file: 'jim' },
+            { char: 'چ', name: 'Che', file: 'che' }, 
+            { char: 'ح', name: 'He', file: 'he' }, 
+            { char: 'خ', name: 'Khe', file: 'khe' }, 
+            { char: 'د', name: 'Dal', file: 'dal' },
+            { char: 'ذ', name: 'Zal', file: 'zal' }, 
+            { char: 'ر', name: 'Re', file: 're' },
+            { char: 'ز', name: 'Ze', file: 'ze' }, 
+            { char: 'ژ', name: 'Zhe', file: 'zhe' }, 
+            { char: 'س', name: 'Sin', file: 'sin' }, 
+            { char: 'ش', name: 'Shin', file: 'shin' },
+            { char: 'ص', name: 'Sad', file: 'sad' }, 
+            { char: 'ض', name: 'Zad', file: 'zad' }, 
+            { char: 'ط', name: 'Ta', file: 'ta' }, 
+            { char: 'ظ', name: 'Za', file: 'za' }, 
+            { char: 'ع', name: 'Ayn', file: 'ayn' }, 
+            { char: 'غ', name: 'Ghayn', file: 'ghayn' },
+            { char: 'ف', name: 'Fe', file: 'fe' }, 
+            { char: 'ق', name: 'Ghaf', file: 'ghaf' }, 
+            { char: 'ک', name: 'Kaf', file: 'kaf' }, 
+            { char: 'گ', name: 'Gaf', file: 'gaf' },
+            { char: 'ل', name: 'Lam', file: 'lam' }, 
+            { char: 'م', name: 'Mim', file: 'mim' }, 
+            { char: 'ن', name: 'Nun', file: 'nun' }, 
+            { char: 'و', name: 'Vav', file: 'vav' },
+            { char: 'ه', name: 'He', file: 'he2' }, 
+            { char: 'ی', name: 'Ye', file: 'ye' }
+        ];
+
+        const englishLetters = [
+            { char: 'A', name: 'A', file: 'a' }, 
+            { char: 'B', name: 'B', file: 'b' }, 
+            { char: 'C', name: 'C', file: 'c' }, 
+            { char: 'D', name: 'D', file: 'd' }, 
+            { char: 'E', name: 'E', file: 'e' }, 
+            { char: 'F', name: 'F', file: 'f' },
+            { char: 'G', name: 'G', file: 'g' }, 
+            { char: 'H', name: 'H', file: 'h' }, 
+            { char: 'I', name: 'I', file: 'i' }, 
+            { char: 'J', name: 'J', file: 'j' },
+            { char: 'K', name: 'K', file: 'k' }, 
+            { char: 'L', name: 'L', file: 'l' },
+            { char: 'M', name: 'M', file: 'm' }, 
+            { char: 'N', name: 'N', file: 'n' }, 
+            { char: 'O', name: 'O', file: 'o' }, 
+            { char: 'P', name: 'P', file: 'p' },
+            { char: 'Q', name: 'Q', file: 'q' }, 
+            { char: 'R', name: 'R', file: 'r' }, 
+            { char: 'S', name: 'S', file: 's' }, 
+            { char: 'T', name: 'T', file: 't' }, 
+            { char: 'U', name: 'U', file: 'u' }, 
+            { char: 'V', name: 'V', file: 'v' },
+            { char: 'W', name: 'W', file: 'w' }, 
+            { char: 'X', name: 'X', file: 'x' }, 
+            { char: 'Y', name: 'Y', file: 'y' }, 
+            { char: 'Z', name: 'Z', file: 'z' }
+        ];
+
+        let currentIndex = 0;
+        let isFarsi = true;
+        let currentList = farsiLetters;
+        let uiLanguage = 'en';
+        let currentMode = 'learn';
+        
+        let currentAudio = null;
+        let nextAudio = null;
+        let audioCache = {};
+
+        let canvas, ctx, guideCanvas, guideCtx;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const appContainer = document.getElementById('appContainer');
+        const restartBtn = document.getElementById('restartBtn');
+        const uiLangToggle = document.getElementById('uiLangToggle');
+        const letterEl = document.getElementById('letterDisplay');
+        const progressEl = document.getElementById('progressBar');
+        const langLabel = document.getElementById('currentLangLabel');
+        const statusMsg = document.getElementById('statusMsg');
+        const offlineBadge = document.getElementById('offlineBadge');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const canvasControls = document.getElementById('canvasControls');
+        const learnSoundBtn = document.getElementById('learnSoundBtn');
+
+        function initCanvas() {
+            canvas = document.getElementById('traceCanvas');
+            guideCanvas = document.getElementById('guideCanvas');
+            
+            if (!canvas || !guideCanvas) {
+                console.error('Canvas elements not found');
+                return;
+            }
+            
+            ctx = canvas.getContext('2d');
+            guideCtx = guideCanvas.getContext('2d');
+            
+            resizeCanvas();
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        function resizeCanvas() {
+            if (!canvas || !guideCanvas || !canvasContainer) return;
+            
+            const wrapper = canvasContainer.querySelector('.canvas-wrapper');
+            const rect = wrapper.getBoundingClientRect();
+            
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            guideCanvas.width = rect.width;
+            guideCanvas.height = rect.height;
+            
+            ctx.lineWidth = Math.max(8, canvas.width / 40);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#FF6B6B';
+            
+            if (currentMode === 'write') {
+                setTimeout(() => drawGuide(), 50);
+            }
+        }
+
+        function drawGuide() {
+            if (!guideCtx || !guideCanvas) return;
+            
+            const item = currentList[currentIndex];
+            if (!item) return;
+            
+            // Clear canvas completely
+            guideCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
+            
+            // Calculate perfect center positioning
+            const centerX = guideCanvas.width / 2;
+            const centerY = guideCanvas.height / 2;
+            
+            // Calculate font size to fit nicely in canvas
+            const padding = 30;
+            const maxWidth = guideCanvas.width - (padding * 2);
+            const maxHeight = guideCanvas.height - (padding * 2);
+            const fontSize = Math.min(maxWidth, maxHeight);
+            
+            // Set font properties
+            const fontFamily = isFarsi ? 'Amiri, serif' : 'Fredoka, sans-serif';
+            guideCtx.font = `bold ${fontSize}px ${fontFamily}`;
+            guideCtx.fillStyle = 'rgba(78, 205, 196, 0.4)';
+            guideCtx.textAlign = 'center';
+            guideCtx.textBaseline = 'middle';
+            
+            // Draw letter perfectly centered
+            guideCtx.fillText(item.char, centerX, centerY);
+        }
+
+        function getPos(e) {
+            if (!canvas) return { x: 0, y: 0 };
+            
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            if (e.touches && e.touches.length > 0) {
+                return {
+                    x: (e.touches[0].clientX - rect.left) * scaleX,
+                    y: (e.touches[0].clientY - rect.top) * scaleY
+                };
+            } else {
+                return {
+                    x: (e.clientX - rect.left) * scaleX,
+                    y: (e.clientY - rect.top) * scaleY
+                };
+            }
+        }
+
+        function startDrawing(e) {
+            e.preventDefault();
+            isDrawing = true;
+            const pos = getPos(e);
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            startDrawing(e);
+        }
+
+        function draw(e) {
+            if (!isDrawing || !ctx) return;
+            e.preventDefault();
+            
+            const pos = getPos(e);
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            draw(e);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        function clearCanvas() {
+            if (!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function updateTranslations() {
+            const t = translations[uiLanguage];
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    el.textContent = t[key];
+                }
+            });
+
+            uiLangToggle.textContent = uiLanguage === 'en' ? t.ui_lang_fa : t.ui_lang_en;
+            langLabel.textContent = isFarsi ? t.farsi : t.english;
+            
+            const switchLink = document.querySelector('.lang-switch a');
+            if (switchLink) {
+                switchLink.textContent = isFarsi ? t.switch_to_english : t.switch_to_farsi;
+            }
+
+            if (uiLanguage === 'fa') {
+                document.body.classList.add('rtl');
+                document.documentElement.lang = 'fa';
+                document.documentElement.dir = 'rtl';
+            } else {
+                document.body.classList.remove('rtl');
+                document.documentElement.lang = 'en';
+                document.documentElement.dir = 'ltr';
+            }
+
+            if (isFarsi) {
+                letterEl.classList.remove('english');
+            } else {
+                letterEl.classList.add('english');
+            }
+
+            localStorage.setItem('alifba_ui_lang', uiLanguage);
+        }
+
+        function toggleUILanguage() {
+            uiLanguage = uiLanguage === 'en' ? 'fa' : 'en';
+            isFarsi = uiLanguage === 'fa';
+            currentList = isFarsi ? farsiLetters : englishLetters;
+            currentIndex = 0;
+            updateTranslations();
+            if (appContainer.classList.contains('visible')) {
+                updateDisplay();
+            }
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            const learnBtn = document.getElementById('learnModeBtn');
+            const writeBtn = document.getElementById('writeModeBtn');
+            
+            if (mode === 'learn') {
+                // LEARN MODE: Hide canvas, show sound button
+                learnBtn.classList.add('active');
+                writeBtn.classList.remove('active');
+                canvasContainer.classList.remove('show');
+                canvasControls.style.display = 'none';
+                learnSoundBtn.style.display = 'flex';
+            } else {
+                // WRITE MODE: Show canvas, hide sound button
+                learnBtn.classList.remove('active');
+                writeBtn.classList.add('active');
+                canvasContainer.classList.add('show');
+                canvasControls.style.display = 'flex';
+                learnSoundBtn.style.display = 'none';
+                
+                // Initialize canvas after showing
+                setTimeout(() => {
+                    initCanvas();
+                    resizeCanvas();
+                    drawGuide();
+                }, 100);
+            }
+        }
+
+        function startApp() {
+            welcomeScreen.classList.add('hidden');
+            appContainer.classList.add('visible');
+            restartBtn.classList.add('show');
+            
+            isFarsi = uiLanguage === 'fa';
+            currentList = isFarsi ? farsiLetters : englishLetters;
+            currentIndex = 0;
+            
+            checkLocalFiles();
+            updateDisplay();
+        }
+
+        function showWelcome() {
+            if(currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            welcomeScreen.classList.remove('hidden');
+            appContainer.classList.remove('visible');
+            restartBtn.classList.remove('show');
+        }
+
+        function checkLocalFiles() {
+            const t = translations[uiLanguage];
+            const folder = isFarsi ? 'fa' : 'en';
+            const firstFile = isFarsi ? 'alef.mp3' : 'a.mp3';
+            const testAudio = new Audio(`audio/${folder}/${firstFile}`);
+            testAudio.addEventListener('canplaythrough', () => {
+                offlineBadge.classList.add('show');
+                statusMsg.textContent = "✅ " + t.audio_ready;
+                statusMsg.style.color = "#27ae60";
+            }, { once: true });
+            testAudio.addEventListener('error', () => {
+                offlineBadge.classList.remove('show');
+                statusMsg.textContent = "⚠️ " + t.audio_not_found;
+                statusMsg.style.color = "#e67e22";
+            }, { once: true });
+            testAudio.load();
+        }
+
+        function updateDisplay() {
+            const item = currentList[currentIndex];
+            const t = translations[uiLanguage];
+            
+            letterEl.style.animation = 'none';
+            letterEl.offsetHeight; 
+            letterEl.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+            letterEl.textContent = item.char;
+            
+            if (isFarsi) {
+                letterEl.classList.remove('english');
+            } else {
+                letterEl.classList.add('english');
+            }
+            
+            const percentage = ((currentIndex + 1) / currentList.length) * 100;
+            progressEl.style.width = percentage + '%';
+
+            preloadNextAudio();
+            
+            langLabel.textContent = isFarsi ? t.farsi : t.english;
+            const switchLink = document.querySelector('.lang-switch a');
+            if (switchLink) {
+                switchLink.textContent = isFarsi ? t.switch_to_english : t.switch_to_farsi;
+            }
+            
+            // Update canvas if in write mode
+            if (currentMode === 'write') {
+                clearCanvas();
+                setTimeout(() => {
+                    resizeCanvas();
+                    drawGuide();
+                }, 100);
+            }
+            
+            setTimeout(() => {
+                playAudio(true);
+            }, 100);
+        }
+
+        function getAudioPath(letter) {
+            const folder = isFarsi ? 'fa' : 'en';
+            return `audio/${folder}/${letter.file}.mp3`;
+        }
+
+        function preloadNextAudio() {
+            let nextIndex = currentIndex + 1;
+            if (nextIndex >= currentList.length) nextIndex = 0;
+            
+            const nextLetter = currentList[nextIndex];
+            const path = getAudioPath(nextLetter);
+            
+            if (!audioCache[path]) {
+                nextAudio = new Audio(path);
+                nextAudio.load();
+                audioCache[path] = nextAudio;
+            } else {
+                nextAudio = audioCache[path];
+            }
+        }
+
+        function playAudio(isAuto = false) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            const t = translations[uiLanguage];
+
+            if (!isAuto) {
+                const btn = currentMode === 'write' ? 
+                    document.querySelector('.sound-btn') : 
+                    document.getElementById('learnSoundBtn');
+                if (btn) {
+                    btn.classList.add('shake');
+                    setTimeout(() => btn.classList.remove('shake'), 500);
+                }
+            }
+
+            const letter = currentList[currentIndex];
+            const path = getAudioPath(letter);
+            
+            if (audioCache[path]) {
+                currentAudio = audioCache[path];
+            } else {
+                currentAudio = new Audio(path);
+                audioCache[path] = currentAudio;
+            }
+
+            currentAudio.play().then(() => {
+                if (!isAuto) {
+                    statusMsg.textContent = t.playing;
+                }
+            }).catch(error => {
+                console.error("Audio play failed:", error);
+                if (!isAuto) {
+                    statusMsg.textContent = "❌ " + t.file_not_found + path;
+                    statusMsg.style.color = "#e74c3c";
+                }
+            });
+
+            currentAudio.onended = () => {
+                statusMsg.textContent = "✅ " + t.audio_ready;
+                statusMsg.style.color = "#27ae60";
+            };
+        }
+
+        function nextLetter() {
+            if (currentIndex < currentList.length - 1) {
+                currentIndex++;
+            } else {
+                currentIndex = 0;
+            }
+            updateDisplay();
+        }
+
+        function prevLetter() {
+            if (currentIndex > 0) {
+                currentIndex--;
+            } else {
+                currentIndex = currentList.length - 1;
+            }
+            updateDisplay();
+        }
+
+        function toggleLanguage() {
+            const t = translations[uiLanguage];
+            
+            if(currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            if(nextAudio) nextAudio = null;
+            
+            isFarsi = !isFarsi;
+            currentList = isFarsi ? farsiLetters : englishLetters;
+            currentIndex = 0;
+            
+            langLabel.textContent = isFarsi ? t.farsi : t.english;
+            const switchLink = document.querySelector('.lang-switch a');
+            if (switchLink) {
+                switchLink.textContent = isFarsi ? t.switch_to_english : t.switch_to_farsi;
+            }
+            
+            updateDisplay();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextLetter();
+            if (e.key === 'ArrowLeft') prevLetter();
+            if (e.key === ' ' || e.key === 'Enter') playAudio(false);
+        });
+
+        const savedLang = localStorage.getItem('alifba_ui_lang');
+        if (savedLang && (savedLang === 'en' || savedLang === 'fa')) {
+            uiLanguage = savedLang;
+        }
+        
+        isFarsi = uiLanguage === 'fa';
+        currentList = isFarsi ? farsiLetters : englishLetters;
+        
+        updateTranslations();
+    </script>
+</body>
+</html>
