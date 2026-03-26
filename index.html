@@ -8,7 +8,8 @@
     <link rel="apple-touch-icon" href="favicon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Alifba">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lalezar&family=Vazirmatn:wght@400;700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Updated Fonts: Noto Nastaliq Urdu for Farsi, Arial for English -->
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -176,13 +177,14 @@
             margin-bottom: 5px;
         }
 
+        /* UPDATED: Nastaliq for Farsi, Arial for English */
         .letter-display {
-            font-family: 'Amiri', serif;
-            font-size: 100px;
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 90px;
             font-weight: 400;
             color: var(--primary-color);
             margin: 10px 0;
-            line-height: 1;
+            line-height: 1.8;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             text-align: center;
@@ -191,8 +193,9 @@
         }
 
         .letter-display.english {
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 600;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
         }
 
         .mode-toggle {
@@ -224,7 +227,6 @@
             box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
         }
 
-        /* Canvas Container - Only visible in write mode */
         .canvas-container {
             width: 100%;
             margin: 10px 0;
@@ -234,7 +236,7 @@
             background: white;
             border: 3px solid var(--secondary-color);
             position: relative;
-            display: none; /* Hidden by default */
+            display: none;
         }
 
         .canvas-container.show {
@@ -475,10 +477,9 @@
             flex-direction: row-reverse;
         }
 
-        /* Responsive Design */
         @media (max-width: 480px) {
             .letter-display {
-                font-size: 80px;
+                font-size: 75px;
             }
             
             .canvas-wrapper {
@@ -502,7 +503,7 @@
 
         @media (max-width: 360px) {
             .letter-display {
-                font-size: 70px;
+                font-size: 65px;
             }
             
             .canvas-wrapper {
@@ -532,7 +533,7 @@
             }
             
             .letter-display {
-                font-size: 70px;
+                font-size: 65px;
             }
         }
     </style>
@@ -552,16 +553,13 @@
     <div class="app-container" id="appContainer">
         <img src="logo.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
         
-        <!-- Large Letter Display (always visible) -->
         <div class="letter-display" id="letterDisplay">ا</div>
 
-        <!-- Mode Toggle -->
         <div class="mode-toggle">
             <button class="mode-btn active" id="learnModeBtn" onclick="switchMode('learn')" data-i18n="learn_mode">📖 Learn</button>
             <button class="mode-btn" id="writeModeBtn" onclick="switchMode('write')" data-i18n="write_mode">✍️ Write</button>
         </div>
 
-        <!-- Canvas Container (only in write mode) -->
         <div class="canvas-container" id="canvasContainer">
             <div class="canvas-wrapper">
                 <canvas id="guideCanvas"></canvas>
@@ -570,7 +568,6 @@
         </div>
 
         <div class="controls-area">
-            <!-- Canvas Controls (only in write mode) -->
             <div class="canvas-controls" id="canvasControls" style="display: none;">
                 <button class="control-btn clear-btn" onclick="clearCanvas()">
                     <span>🗑️</span> <span data-i18n="clear">Clear</span>
@@ -580,12 +577,10 @@
                 </button>
             </div>
 
-            <!-- Sound Button (only in learn mode) -->
             <button class="sound-btn" id="learnSoundBtn" onclick="playAudio()" style="width: 60px; height: 60px; border-radius: 50%; font-size: 28px; box-shadow: 0 4px 0 #E6C229; border: 3px solid white; display: flex; align-items: center; justify-content: center;">
                 🔊
             </button>
 
-            <!-- Navigation Buttons -->
             <div class="nav-buttons">
                 <button class="nav-btn" onclick="prevLetter()">
                     <span style="font-size: 20px;">&#10094;</span>
@@ -811,27 +806,23 @@
             const item = currentList[currentIndex];
             if (!item) return;
             
-            // Clear canvas completely
             guideCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
             
-            // Calculate perfect center positioning
             const centerX = guideCanvas.width / 2;
             const centerY = guideCanvas.height / 2;
             
-            // Calculate font size to fit nicely in canvas
             const padding = 30;
             const maxWidth = guideCanvas.width - (padding * 2);
             const maxHeight = guideCanvas.height - (padding * 2);
             const fontSize = Math.min(maxWidth, maxHeight);
             
-            // Set font properties
-            const fontFamily = isFarsi ? 'Amiri, serif' : 'Fredoka, sans-serif';
+            // UPDATED: Nastaliq for Farsi, Arial for English
+            const fontFamily = isFarsi ? "'Noto Nastaliq Urdu', serif" : "'Arial', 'Helvetica', sans-serif";
             guideCtx.font = `bold ${fontSize}px ${fontFamily}`;
             guideCtx.fillStyle = 'rgba(78, 205, 196, 0.4)';
             guideCtx.textAlign = 'center';
             guideCtx.textBaseline = 'middle';
             
-            // Draw letter perfectly centered
             guideCtx.fillText(item.char, centerX, centerY);
         }
 
@@ -952,21 +943,18 @@
             const writeBtn = document.getElementById('writeModeBtn');
             
             if (mode === 'learn') {
-                // LEARN MODE: Hide canvas, show sound button
                 learnBtn.classList.add('active');
                 writeBtn.classList.remove('active');
                 canvasContainer.classList.remove('show');
                 canvasControls.style.display = 'none';
                 learnSoundBtn.style.display = 'flex';
             } else {
-                // WRITE MODE: Show canvas, hide sound button
                 learnBtn.classList.remove('active');
                 writeBtn.classList.add('active');
                 canvasContainer.classList.add('show');
                 canvasControls.style.display = 'flex';
                 learnSoundBtn.style.display = 'none';
                 
-                // Initialize canvas after showing
                 setTimeout(() => {
                     initCanvas();
                     resizeCanvas();
@@ -1043,7 +1031,6 @@
                 switchLink.textContent = isFarsi ? t.switch_to_english : t.switch_to_farsi;
             }
             
-            // Update canvas if in write mode
             if (currentMode === 'write') {
                 clearCanvas();
                 setTimeout(() => {
