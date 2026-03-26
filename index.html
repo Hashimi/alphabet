@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" href="favicon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Alifba">
-    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -145,6 +145,41 @@
             box-shadow: 0 3px 0 #E6C229;
         }
 
+        /* ========== FOOTER STYLES ========== */
+        .welcome-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .welcome-footer .brand-name {
+            font-family: 'Noto Naskh Arabic', serif;
+            font-size: 18px;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .welcome-footer .creator {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .welcome-footer .heart {
+            color: #FF6B6B;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        /* ========== END FOOTER STYLES ========== */
+
         .app-container {
             background: white;
             width: 95%;
@@ -177,12 +212,12 @@
         }
 
         .letter-display {
-            font-family: 'Noto Nastaliq Urdu', serif;
+            font-family: 'Noto Naskh Arabic', serif;
             font-size: 90px;
-            font-weight: 400;
+            font-weight: 700;
             color: var(--primary-color);
             margin: 10px 0;
-            line-height: 1.8;
+            line-height: 1.6;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             text-align: center;
@@ -546,6 +581,13 @@
         <h1 class="welcome-title" data-i18n="welcome_title">Welcome!</h1>
         <p class="welcome-subtitle" data-i18n="welcome_subtitle">Let's Learn Farsi & English Letters Together! 🎉</p>
         <button class="start-btn" onclick="startApp()" data-i18n="start_btn">Start Learning ▶</button>
+        
+        <!-- ========== FOOTER ========== -->
+        <div class="welcome-footer">
+            <div class="brand-name">betالفا</div>
+            <div class="creator">By HashimiHideout <span class="heart">❤</span></div>
+        </div>
+        <!-- ========== END FOOTER ========== -->
     </div>
 
     <div class="app-container" id="appContainer">
@@ -798,7 +840,6 @@
             }
         }
 
-        // ========== FIXED: Smaller letters for better visibility ==========
         function drawGuide() {
             if (!guideCtx || !guideCanvas) return;
             
@@ -810,15 +851,13 @@
             const centerX = guideCanvas.width / 2;
             const centerY = guideCanvas.height / 2;
             
-            // REDUCED: More padding for better visibility (was 30px, now 50px)
-            const padding = 50;
+            const padding = 35;
             const maxWidth = guideCanvas.width - (padding * 2);
             const maxHeight = guideCanvas.height - (padding * 2);
             
-            // REDUCED: Letter size is now 65% of available space (was 100%)
-            const fontSize = Math.min(maxWidth, maxHeight) * 0.65;
+            const fontSize = Math.min(maxWidth, maxHeight) * 0.75;
             
-            const fontFamily = isFarsi ? "'Noto Nastaliq Urdu', serif" : "'Arial', 'Helvetica', sans-serif";
+            const fontFamily = isFarsi ? "'Noto Naskh Arabic', serif" : "'Arial', 'Helvetica', sans-serif";
             guideCtx.font = `bold ${fontSize}px ${fontFamily}`;
             guideCtx.fillStyle = 'rgba(78, 205, 196, 0.4)';
             guideCtx.textAlign = 'center';
