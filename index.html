@@ -8,7 +8,6 @@
     <link rel="apple-touch-icon" href="favicon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Alifba">
-    <!-- Updated Fonts: Noto Nastaliq Urdu for Farsi, Arial for English -->
     <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -177,7 +176,6 @@
             margin-bottom: 5px;
         }
 
-        /* UPDATED: Nastaliq for Farsi, Arial for English */
         .letter-display {
             font-family: 'Noto Nastaliq Urdu', serif;
             font-size: 90px;
@@ -800,6 +798,7 @@
             }
         }
 
+        // ========== FIXED: Smaller letters for better visibility ==========
         function drawGuide() {
             if (!guideCtx || !guideCanvas) return;
             
@@ -811,12 +810,14 @@
             const centerX = guideCanvas.width / 2;
             const centerY = guideCanvas.height / 2;
             
-            const padding = 30;
+            // REDUCED: More padding for better visibility (was 30px, now 50px)
+            const padding = 50;
             const maxWidth = guideCanvas.width - (padding * 2);
             const maxHeight = guideCanvas.height - (padding * 2);
-            const fontSize = Math.min(maxWidth, maxHeight);
             
-            // UPDATED: Nastaliq for Farsi, Arial for English
+            // REDUCED: Letter size is now 65% of available space (was 100%)
+            const fontSize = Math.min(maxWidth, maxHeight) * 0.65;
+            
             const fontFamily = isFarsi ? "'Noto Nastaliq Urdu', serif" : "'Arial', 'Helvetica', sans-serif";
             guideCtx.font = `bold ${fontSize}px ${fontFamily}`;
             guideCtx.fillStyle = 'rgba(78, 205, 196, 0.4)';
